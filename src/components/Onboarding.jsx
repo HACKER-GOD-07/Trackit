@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Activity, ArrowRight } from 'lucide-react';
 import { db } from '../db/db';
+import { syncProfileToCloud } from '../db/firebase';
 
 export default function Onboarding() {
   const [name, setName] = useState('');
@@ -40,7 +41,7 @@ export default function Onboarding() {
     const today = new Date().toISOString().split('T')[0];
 
     try {
-      await db.profiles.add({
+      const profileData = {
         name: name.trim(),
         username: name.trim().toLowerCase().replace(/\s+/g, ''),
         password: '',
@@ -54,7 +55,12 @@ export default function Onboarding() {
         isHardcoreMode: true,
         targetCalories,
         customHabits: []
-      });
+      };
+
+      await db.profiles.add(profileData);
+
+      // Background sync to cloud — fire and forget
+      syncProfileToCloud(profileData);
     } catch (err) {
       console.error('Failed to create profile', err);
       setError('Something went wrong. Please try again.');

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, coreHabits } from './db/db';
+import { syncDailyLogToCloud, syncProfileToCloud } from './db/firebase';
 import Background from './components/3d/Background';
 import Header from './components/Header';
 import HabitBoard from './components/HabitBoard';
@@ -51,6 +52,13 @@ function App() {
       currentCompleted.push(habitId);
     }
 
+    const logPayload = {
+      date: today,
+      completedHabits: currentCompleted,
+      weight: todayLog?.weight || null,
+      calories: todayLog?.calories || null
+    };
+
     if (todayLog) {
       await db.dailyLogs.update(todayLog.id, {
         completedHabits: currentCompleted
@@ -58,12 +66,12 @@ function App() {
     } else {
       await db.dailyLogs.add({
         profileId: profile.id,
-        date: today,
-        completedHabits: currentCompleted,
-        weight: null,
-        calories: null
+        ...logPayload
       });
     }
+
+    // Background sync to cloud
+    syncDailyLogToCloud(profile.id, logPayload);
   };
 
   const handleDeleteHabit = async (habitId) => {
@@ -88,6 +96,7 @@ function App() {
     
     await db.profiles.update(profile.id, { customHabits: updatedHabits });
     setNewHabit('');
+    syncProfileToCloud({ ...profile, customHabits: updatedHabits });
   };
 
   const handleUpdateTotalDays = async (e) => {
