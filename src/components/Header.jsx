@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { quotes } from '../utils/quotes';
 import { Award } from 'lucide-react';

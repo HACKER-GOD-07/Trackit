@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, coreHabits } from './db/db';
 import Background from './components/3d/Background';
@@ -129,7 +129,7 @@ function App() {
         } else {
           alert('Invalid backup format. Missing profiles or dailyLogs.');
         }
-      } catch (err) {
+      } catch {
         alert('Invalid backup file. Could not parse JSON.');
       }
     };

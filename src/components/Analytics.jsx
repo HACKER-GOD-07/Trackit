@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db/db';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { TrendingUp, Calendar as CalendarIcon, BookOpen } from 'lucide-react';
-import { format, subDays, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isToday } from 'date-fns';
 
 export default function Analytics({ profile, today }) {
   const profileId = profile?.id;
@@ -22,9 +22,10 @@ export default function Analytics({ profile, today }) {
 
   useEffect(() => {
     if (todayLog?.notes && !notesInput) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNotesInput(todayLog.notes);
     }
-  }, [todayLog?.notes]);
+  }, [todayLog?.notes, notesInput]);
 
   useEffect(() => {
     if (todayLog) {

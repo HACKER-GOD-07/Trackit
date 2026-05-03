@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import { useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Points, PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
@@ -6,7 +6,7 @@ import * as THREE from 'three';
 function ParticleSwarm({ completionRatio }) {
   const ref = useRef();
   
-  const [positions] = useMemo(() => {
+  const [positions] = useState(() => {
     const count = 1000;
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -14,8 +14,8 @@ function ParticleSwarm({ completionRatio }) {
       pos[i * 3 + 1] = (Math.random() - 0.5) * 15;
       pos[i * 3 + 2] = (Math.random() - 0.5) * 15;
     }
-    return [pos];
-  }, []);
+    return pos;
+  });
 
   useFrame((state, delta) => {
     if (!ref.current) return;
